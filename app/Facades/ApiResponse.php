@@ -8,13 +8,13 @@ use Illuminate\Support\Facades\Facade;
 /**
  * @method static \App\Response\ApiResponse setMessage(string $message)
  * @method static \App\Response\ApiResponse setData(array $data)
- * @method static \App\Response\ApiResponse setStatusCode(int $statusCode)
- * @method static \App\Response\ApiResponse setRedirectCode(string $redirect_code)
- * @method static string getMessage()
- * @method static string getRedirectCode()
  * @method static array getData()
- * @method static int getStatusCode()
- * @method static \Illuminate\Http\JsonResponse json(?int $statusCode = null, ?array $data = null, ?string $message = null)
+ * @method static string getMessage()
+ * @method static \App\Response\ApiResponse setRedirectCode(string $code)
+ * @method static \App\Response\ApiResponse setStatusCode(int $statusCode)
+ * @method static string getRedirectCode()
+ * @method static array toArray(?array $data = null, ?string $message = null, ?int $status = null)
+ * @method static \Illuminate\Http\JsonResponse json(?array $data = null, ?string $message = null, ?int $status = null)
  *
  * @see \App\Response\ApiResponse
  */

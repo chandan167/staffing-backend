@@ -1,5 +1,8 @@
 <?php
 
+
+use App\Http\Controllers\User\Auth\OtpController;
+use App\Http\Controllers\User\Auth\SignInController;
 use App\Http\Controllers\User\Auth\SignupController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -20,8 +23,14 @@ use Illuminate\Support\Facades\Route;
 // });
 
 
-Route::prefix('user')->group(function(){
-    Route::post('signup', [SignupController::class, 'signup']);
+Route::prefix('user')->group(function () {
+    Route::post('sign-up', [SignupController::class, 'signup']);
+    Route::post('sign-in', [SignInController::class, 'signIn']);
 });
 
-
+Route::middleware(['auth:api'])->group(function () {
+    Route::prefix('otp')->middleware('check_otp_verify')->group(function () {
+        Route::post('send-otp', [OtpController::class, 'sendOtp']);
+        Route::post('otp-verify', [OtpController::class, 'verify']);
+    });
+});

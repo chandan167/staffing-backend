@@ -5,8 +5,10 @@ namespace App\Http\Controllers\User\Auth;
 use App\Facades\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\User\SignupRequest;
+use App\Services\Otp\OtpService;
 use App\Services\UserService;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class SignupController extends Controller
 {
@@ -21,8 +23,11 @@ class SignupController extends Controller
 
     public function signup(SignupRequest $request)
     {
-        $user = $this->userService->findOrFail(256);
         $user = $this->userService->create($request->getData());
-        return ApiResponse::setData(['user' => $user])->json();
+        $token = $user->createToken($user->email)->accessToken;
+        return ApiResponse::setData([
+            'user' => $user,
+            'token' => $token
+        ])->setStatusCode(Response::HTTP_CREATED)->json();
     }
 }

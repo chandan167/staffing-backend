@@ -13,7 +13,7 @@ class SignupRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -26,8 +26,18 @@ class SignupRequest extends FormRequest
         return [
             'name' => 'required|max:150',
             'email' => 'required|email|unique:users,email',
-            'phone' => 'required|phone|unique:users,phone',
+            'phone' => 'required|unique:users,phone',
             'password' => 'required|confirmed'
+        ];
+    }
+
+    public function getData(): array
+    {
+        return [
+            'name' => $this->name,
+            'email' => $this->email,
+            'phone' => $this->phone,
+            'password' => $this->password
         ];
     }
 }

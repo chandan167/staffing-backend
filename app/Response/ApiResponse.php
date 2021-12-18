@@ -9,40 +9,77 @@ class ApiResponse extends Response
 {
 
     /**
-     * Hold response data
-     * @var array $data
-     */
-    private array $data;
-
-
-    /**
-     * Hold response message
+     * Store response message
+     *
      * @var string $message
      */
-    private string $message;
+    private string $message = '';
+
+    /**
+     * Store response data
+     *
+     * @var array $data
+     */
+    private array $data = [];
 
 
     /**
-     * Hold redirect_code code
-     * @var string $redirect_code
+     * Store redirection code jump one screen to another
+     *
+     * @var string $message
      */
-    private string $redirect_code;
+    private string $redirect_code = '';
 
 
-
-    public function __construct()
+    /**
+     * Send Json Response
+     *
+     * @param array|null $data default value is []
+     * @param string|null $message default value is null
+     * @param int|null $status default value is null
+     *
+     * @return JsonResponse
+     */
+    public function json(?array $data = null, ?string $message = null, ?int $status = null): JsonResponse
     {
-        $this->data = [];
-        $this->message = "";
-        $this->redirect_code = "";
-        $this->setStatusCode(self::HTTP_OK);
+        $responseData = $this->toArray($data, $message, $status);
+        return response()->json($responseData, $this->getStatusCode());
+    }
+
+    /**
+     * Build Response Data
+     *
+     * @param array|null $data default value is []
+     * @param string|null $message default value is null
+     * @param int|null $status default value is null
+     *
+     * @return array
+     */
+    public function toArray(?array $data = null, ?string $message = null, ?int $status = null): array
+    {
+        if($data){
+            $this->setData($data);
+        }
+        if($message){
+            $this->setMessage($message);
+        }
+        if($status){
+            $this->setStatusCode($status);
+        }
+        return [
+            'status' => $this->getStatusCode(),
+            'redirect_code' => $this->getRedirectCode(),
+            'message' => $this->getMessage(),
+            'data' => (object)$this->getData(),
+        ];
     }
 
 
     /**
-     * set message
+     * Set message
+     *
      * @param string $message
-     * @return self|$this
+     * @return self
      */
     public function setMessage(string $message): self
     {
@@ -52,33 +89,9 @@ class ApiResponse extends Response
 
 
     /**
-     * set data
-     * @param array $data
-     * @return self|$this
-     */
-    public function setData(array $data): self
-    {
-        $this->data = $data;
-        return $this;
-    }
-
-
-    /**
-     * set redirect code
-     * @param string $redirect_code
-     * @return self|$this
-     */
-    public function setRedirectCode(string $redirect_code): self
-    {
-        $this->redirect_code = $redirect_code;
-        return $this;
-    }
-
-
-
-    /**
-     * get message
-     * @return self|$this
+     * Get message
+     *
+     * @return string
      */
     public function getMessage(): string
     {
@@ -86,78 +99,48 @@ class ApiResponse extends Response
     }
 
 
-
     /**
-     * get message
-     * @return self|$this
+     * Set RedirectCode
+     *
+     * @param string $code
+     * @return self
      */
-    public function getData(): array
+    public function setRedirectCode(string $code): self
     {
-        return $this->data;
+        $this->redirect_code = $code;
+        return $this;
     }
 
-
-    /**
-     * get redirect code
-     * @return self|$this
+     /**
+     * get RedirectCode
+     *
+     * @param string $code
+     * @return self
      */
     public function getRedirectCode(): string
     {
         return $this->redirect_code;
     }
 
-
     /**
-     * return json response
-     * @return JsonResponse
+     * Set Data
+     *
+     * @param array $data
+     * @return self
      */
-    public function json(?int $statusCode = null, ?array $data = null, ?string $message = null)
+    public function setData(array $data): self
     {
-        $this->setResponse($statusCode, $data, $message);
-        return response()->json($this->buildResponse(), $this->getStatusCode());
-    }
-
-
-
-
-    /**
-     * set response data
-     * @param int|null $statusCode
-     * @param array|null $data
-     * @param string|null $message
-     * @return self|$this
-     */
-    private function setResponse(?int $statusCode = null, ?array $data = null, ?string $message = null): self
-    {
-        if ($statusCode) {
-            $this->setStatusCode($statusCode);
-        }
-        if ($data) {
-            $this->setData($data);
-        }
-        if ($message) {
-            $this->setMessage($message);
-        }
-
+        $this->data = $data;
         return $this;
     }
 
-
-
     /**
-     * build response data
-     * @param int|null $statusCode
-     * @param array|null $data
-     * @param string|null $message
+     * Get Data
+     *
      * @return array
      */
-    private function buildResponse(?int $statusCode = null, ?array $data = null, ?string $message = null): array
+    public function getData(): array
     {
-        return [
-            'status' => $this->statusCode,
-            'message' => $this->message,
-            'redirect_code' => $this->redirect_code,
-            'data' => (object) $this->data
-        ];
+        return $this->data;
     }
 }
